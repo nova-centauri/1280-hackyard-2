@@ -33,3 +33,9 @@ Make a firm rule to store all planning documents in the repo itself. You should 
 3. My house front is facing NE
 4. Yes it does
 5. I will find out about that later
+
+---
+
+## Prompt 4 — 2026-09-11
+
+Push to main

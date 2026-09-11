@@ -30,6 +30,8 @@ Superseded: Vercel + Supabase (v0.1 proposal) → replaced by VPS + SQLite per P
 
 | 2026-09-11 | All work ships through PR #1 (https://github.com/nova-centauri/1280-hackyard-2/pull/1); pushes to the branch update it | Created from the Claude Code UI. Merging to `main` is what deploys. | **Locked** |
 
+| 2026-09-11 | Day-1 build pushed to `main` on Steve's instruction (Prompt 4); `main` is the deploy branch, so this is the first public deploy once his CI/CD runs | Steve (Prompt 4). | **Locked** |
+
 ## Pending (need Steve; build proceeds on the default)
 
 | # | Question | Default until answered | Answer |
