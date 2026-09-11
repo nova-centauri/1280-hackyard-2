@@ -18,4 +18,4 @@
 - Product: **Breeze Vibe**, domain **breezevibe.site**
 - Competition: 2 days, must be publicly usable without login
 - Branch: `claude/home-temp-management-site-jnz8cn`; Steve deploys `main` → breezevibe.site via his own VPS + Cloudflare CI/CD
-- Stack: Next.js (App Router) + TypeScript + Tailwind + React Three Fiber; SQLite via Drizzle on the VPS; Open-Meteo for weather/air/geocoding
+- Stack: Next.js (App Router) + TypeScript + Tailwind + React Three Fiber; Postgres via Drizzle in prod, PGlite locally; Open-Meteo for weather/air/geocoding

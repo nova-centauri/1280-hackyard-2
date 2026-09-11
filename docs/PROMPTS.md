@@ -23,3 +23,13 @@ sensor but maybe we need to figure that out later I hope that’s a good startin
 
 
 Make a firm rule to store all planning documents in the repo itself. You should also store all of my prompts in order in the same planning folder.
+
+---
+
+## Prompt 3 — 2026-09-11
+
+1. it was a quietcool classic 1472 cfm
+2. Furnace is natural gas, include options for people
+3. My house front is facing NE
+4. Yes it does
+5. I will find out about that later

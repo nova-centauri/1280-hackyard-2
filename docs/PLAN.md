@@ -1,6 +1,6 @@
 # Breeze Vibe — Project Plan
 
-> Status: **v0.2 — decisions from Prompt 2 folded in. Ready for Steve's final read before heavy build.**
+> Status: **v0.3 — all open questions answered (Prompt 3). Day 1 build in progress.**
 > Competition constraint: 2 days, publicly usable at **breezevibe.site** with no login required.
 > Companion docs: `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/TEST-HOUSE.md`. Rules in root `CLAUDE.md`.
 
@@ -32,7 +32,7 @@ Tell Breeze Vibe about your house and where it is. It pulls the live local weath
    - Retrofit flags: added insulation, air-sealed, new windows
    - Shading: trees / awnings / none
 3. **HVAC & ventilation:**
-   - Heating: furnace (gas/oil/propane/electric), boiler + radiators, heat pump, mini-split, baseboard, wood stove, none
+   - Heating: furnace (natural gas / propane / oil / electric), boiler + radiators, heat pump, mini-split, baseboard, wood stove, none
    - Cooling: central AC, heat pump, mini-split, window units, evaporative, none
    - Extras: **whole-house fan** (with CFM, defaulted from sq ft), **attic fan** (separate device, separate effect), ceiling fans, ERV/HRV, bath/kitchen exhaust, dehumidifier
 4. **Comfort envelope:** desired indoor min/max temp, humidity comfort range, and a "prefer fresh air" ↔ "prefer efficiency" slider.
@@ -65,12 +65,12 @@ Anyone can load the site and use everything without logging in. Persistence laye
 | Styling | Tailwind CSS | Fast responsive two-panel grid. |
 | 3D | **three.js via React Three Fiber + drei** | Declarative scene bound to React state. |
 | State | Zustand store holding one `HouseProfile` JSON | Single serializable object = trivial save/load/share. |
-| Database | **SQLite via Drizzle ORM** (file on a Docker volume) | Zero extra services on the VPS. Drizzle makes a later Postgres swap a config change. |
+| Database | **Postgres via Drizzle ORM** in production (VPS already runs it). **PGlite** (embedded Postgres, WASM) whenever `DATABASE_URL` is unset, so local dev and tests need no service. | Same pg schema both ways; no SQLite dialect drift. |
 | Weather | **Open-Meteo** forecast API (free, no key): hourly temp, humidity, dew point, cloud cover, shortwave radiation, wind, `timezone=auto` | Everything the model needs. Server-side cache per rounded lat/lon, 15 min. |
 | Outdoor air | **Open-Meteo Air Quality** API (PM2.5, ozone, US AQI) | Same provider, same cache. |
 | Geocoding | Open-Meteo geocoding for city/ZIP; Nominatim (OSM) for street addresses; browser geolocation button | Free. Returns country code for units. |
 | Auth (stretch) | Auth.js with an email provider, or a hand-rolled magic link | Needs SMTP; deferred. |
-| Hosting | **Steve's VPS behind Cloudflare.** Repo ships a `Dockerfile` (Next.js standalone) + `docker-compose.yml` (app + SQLite volume). Steve wires CI/CD from `main`. | Steve's call. |
+| Hosting | **Steve's VPS behind Cloudflare.** Repo ships a `Dockerfile` (Next.js standalone) + `docker-compose.yml` (app + Postgres, for anyone without one). Steve wires CI/CD from `main`. | Steve's call. |
 | Tests | Vitest on the engine | The engine is the one thing that must be right. |
 
 **Cloudflare notes for Steve:** proxy on (orange cloud) is fine, but add a cache rule to **bypass cache on `/api/*`** and on `/h/*`, otherwise one user's house can be served to another. Weather caching is in-process on the VPS, not at the edge.
@@ -82,7 +82,7 @@ src/app/         Next.js routes: / (app), /h/[code] (shared house), /api/house, 
 src/components/  panels, forms, timeline, charts, assumptions panel
 src/scene/       R3F house scene, materials, weather sky, animations
 src/engine/      pure TS physics model + planner (no React, fully unit-tested), fixtures/
-src/db/          Drizzle schema + migrations (sessions, houses, share_codes, users*)
+src/db/          Drizzle pg schema + migrations (sessions, houses, share_codes, users*); PGlite or Postgres by env
 src/lib/         weather client, geocoding, units, session cookie helpers
 Dockerfile, docker-compose.yml
 ```
@@ -118,7 +118,7 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 ## 6. Two-day schedule
 
 **Day 1 — make it work**
-- AM: scaffold Next.js + Tailwind + R3F + Drizzle/SQLite. Two-panel responsive layout. `HouseProfile` type + Zustand + localStorage mirror. Session cookie + `/api/house` autosave. Input wizard (location → house → HVAC → comfort → readings).
+- AM: scaffold Next.js + Tailwind + R3F + Drizzle (PGlite locally, Postgres in prod). Two-panel responsive layout. `HouseProfile` type + Zustand + localStorage mirror. Session cookie + `/api/house` autosave. Input wizard (location → house → HVAC → comfort → readings).
 - AM: engine v1 with Vitest tests (ACH table, UA, solar gain, attic, one-hour step, planner on a canned forecast) using `docs/TEST-HOUSE.md` as the first fixture.
 - PM: Open-Meteo weather + air quality + geocoding with server cache. Units from country code. Timeline + "right now" card + projected temperature chart + assumptions panel.
 - PM: 3D house v1 (procedural box house, materials, floors, roof, windows, real sun position, cloud dimming).
@@ -147,13 +147,10 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 - **Cloudflare edge caching of API responses** would leak one user's house to another. Cache rule bypass on `/api/*` and `/h/*` is mandatory before going public.
 - **Physics credibility.** Heuristic model, judges may know building science. The editable assumptions panel turns the weakness into a feature.
 - **Address privacy.** Round coordinates to ~1 km, never persist the address string, say so in the UI.
-- **"Mr Cool" whole-house fan.** Mr Cool is an HVAC brand and does not, as far as I know, sell whole-house fans. Need the model label. Defaulting to 2 CFM/sq ft until confirmed.
+- **Low-CFM whole-house fan.** Steve's QuietCool Classic is 1,472 CFM, about 5 ACH on his house. That is a run-all-night device, not a 15-minute flush. The planner must handle both regimes: low-CFM fans get long overnight windows, big fans get short bursts.
 
 ## 9. Open questions for Steve
 
-Non-blocking; the build proceeds on the stated defaults. See `docs/DECISIONS.md` § Pending.
-1. Whole-house fan brand/model (photo of the label), so the CFM is real.
-2. Furnace fuel (gas/propane/oil) for the later cost feature.
-3. Which direction the house faces and which side has the most glass; any south/west shade.
-4. Does the VPS already run Postgres? If yes, I can target it instead of SQLite from the start. If no, SQLite it is.
-5. Do you want a `/api/health` endpoint and a specific port/env convention for your CI/CD? Default: port 3000, `DATABASE_URL=file:/data/breezevibe.db`.
+All Prompt 2 questions were answered in Prompt 3. Remaining, non-blocking:
+1. CI/CD conventions from the VPS side (Steve will report back). Defaults: port 3000, `DATABASE_URL`, `/api/health`.
+2. Tree shade on the SW side of the test house. Default: none.
