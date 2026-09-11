@@ -17,5 +17,5 @@
 ## Project facts
 - Product: **Breeze Vibe**, domain **breezevibe.site**
 - Competition: 2 days, must be publicly usable without login
-- Branch: `claude/home-temp-management-site-jnz8cn`; Steve deploys `main` → breezevibe.site via his own VPS + Cloudflare CI/CD
+- Branch: `claude/home-temp-management-site-jnz8cn`, tracked by PR #1 (https://github.com/nova-centauri/1280-hackyard-2/pull/1). Steve deploys `main` → breezevibe.site via his own VPS + Cloudflare CI/CD
 - Stack: Next.js (App Router) + TypeScript + Tailwind + React Three Fiber; Postgres via Drizzle in prod, PGlite locally; Open-Meteo for weather/air/geocoding

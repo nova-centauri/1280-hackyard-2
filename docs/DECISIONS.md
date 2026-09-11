@@ -28,6 +28,8 @@ Superseded: Vercel + Supabase (v0.1 proposal) → replaced by VPS + SQLite per P
 | 2026-09-11 | Share codes look like `BV-XXX-XXX` from an alphabet without 0/O/1/I; lookup is case- and dash-insensitive | Readable when spoken or typed on a phone. | Proposed |
 | 2026-09-11 | PGlite data lives at `./data/pglite` relative to the server's working directory (`/app/data` in Docker) | Simple; production uses Postgres anyway. | Proposed |
 
+| 2026-09-11 | All work ships through PR #1 (https://github.com/nova-centauri/1280-hackyard-2/pull/1); pushes to the branch update it | Created from the Claude Code UI. Merging to `main` is what deploys. | **Locked** |
+
 ## Pending (need Steve; build proceeds on the default)
 
 | # | Question | Default until answered | Answer |
