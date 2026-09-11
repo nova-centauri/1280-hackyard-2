@@ -15,7 +15,8 @@ Format: date, decision, why, status. Pending items at the bottom need Steve's an
 | 2026-09-11 | Home Assistant is the universal sensor layer; integration is push (HA → our webhook), not LAN discovery; post-competition | Browser pages cannot scan a LAN or call plain-HTTP HA (mixed content). | Proposed |
 | 2026-09-11 | Attic fan and whole-house fan are modeled as two separate devices | Steve's house has both; they do different things. | Proposed |
 | 2026-09-11 | Heating fuel is a user option: natural gas, propane, oil, electric, wood/pellet | Steve (Prompt 3, Q2). | **Locked** |
-| 2026-09-11 | Deployment conventions default to port 3000, `DATABASE_URL` env var, `/api/health`; Steve adjusts CI/CD to match later | Steve (Prompt 3, Q5) deferred it. | Proposed |
+| 2026-09-11 | Deployment conventions default to port 3000, `DATABASE_URL` env var, `/api/health`; Steve adjusts CI/CD to match later | Steve (Prompt 3, Q5) deferred it. | Superseded by the row below |
+| 2026-09-11 | CI/CD is **webhook-pull**: GitHub Actions runs `pnpm test` on push + PR, builds the image and checks `/api/health` on `main`, then POSTs the `breezevibe-deploy` hook (payload `after` = SHA) that VPS-01 maps to `/opt/breezevibe/deploy.sh`. No rsync/SSH from CI. Container on host `127.0.0.1:3060`; `DATABASE_URL` from `/opt/breezevibe/.env` (host Postgres role+db `breezevibe`); compose `db` is local-only; nginx flips off the placeholder only after `/api/health` 200. Notify job skips with a warning until `DEPLOY_WEBHOOK_URL` + `DEPLOY_WEBHOOK_SECRET` exist. | Steve / VPS-01 (Prompt 6), replacing the SSH+rsync plan from Prompt 5. | **Locked** |
 | 2026-09-11 | Structural build first, visual pass second | Steve (Prompt 1). | **Locked** |
 | 2026-09-11 | Two-panel layout everywhere; side-by-side desktop, stacked mobile | Steve (Prompt 1). | **Locked** |
 | 2026-09-11 | All planning docs live in `docs/`; every prompt logged verbatim in `docs/PROMPTS.md` | Steve (Prompt 2). Rule recorded in root `CLAUDE.md`. | **Locked** |
@@ -36,7 +37,7 @@ Superseded: Vercel + Supabase (v0.1 proposal) → replaced by VPS + SQLite per P
 
 | # | Question | Default until answered | Answer |
 |---|---|---|---|
-| 1 | CI/CD conventions from the VPS side (port, env names, health check path) | Port 3000, `DATABASE_URL`, `/api/health` | Steve will report back |
+| 1 | CI/CD conventions from the VPS side (port, env names, health check path) | Port 3000, `DATABASE_URL`, `/api/health` | Answered (Prompt 6): webhook-pull, host `127.0.0.1:3060`, `DATABASE_URL` from `/opt/breezevibe/.env`, `/api/health` gate |
 | 2 | Tree shade on the SW/back side of the test house | None | |
 
 ## Answered (Prompt 3)
