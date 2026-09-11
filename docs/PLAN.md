@@ -115,7 +115,21 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 
 **Calibration (stretch):** with indoor readings, compare predicted vs observed drift and nudge UA and C. This is what makes the Home Assistant feed valuable.
 
-## 6. Two-day schedule
+## 6. Build status (updated every commit)
+
+| Piece | Status |
+|---|---|
+| Next.js scaffold, Tailwind, deps | done |
+| Engine: derive, solar, simulate, planner | done, 21 Vitest tests green, validated on Steve's house |
+| Weather / air quality / geocoding clients | written, not yet wired to UI |
+| DB (Drizzle, PGlite/Postgres) + session cookie | written, not yet exercised |
+| API routes | pending |
+| Two-panel UI + forms + timeline + chart + assumptions | pending |
+| 3D house v1 | pending |
+| Dockerfile / compose | pending |
+| Visual pass (v2) | day 2 |
+
+## 7. Two-day schedule
 
 **Day 1 — make it work**
 - AM: scaffold Next.js + Tailwind + R3F + Drizzle (PGlite locally, Postgres in prod). Two-panel responsive layout. `HouseProfile` type + Zustand + localStorage mirror. Session cookie + `/api/house` autosave. Input wizard (location → house → HVAC → comfort → readings).
@@ -130,7 +144,7 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 - PM: **visual pass.** Construction animation per material, heat glow, air tint by state, fan airflow, page polish, landing copy, favicon/OG image.
 - PM: final deploy to breezevibe.site, disclaimer copy, README, smoke test from a phone on cellular.
 
-## 7. After the competition
+## 8. After the competition
 
 - **Home Assistant integration (first post-competition feature).** Home Assistant is the universal layer, agreed. Two ways to connect, and only one of them actually works from a public website:
   - *Push (recommended).* Breeze Vibe gives the user a per-house webhook URL + token and a ready-to-paste Home Assistant `rest_command` + automation that POSTs the chosen sensor entities every few minutes. Works from anywhere, no CORS, no exposed HA, no mixed-content problem.
@@ -139,7 +153,7 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 - **Cost estimates** ("this saves ~$1.40 today") once a utility-rate input exists.
 - **Smart-thermostat control** is out of scope permanently. Advice only.
 
-## 8. Risks and blunt flags
+## 9. Risks and blunt flags
 
 - **3D construction animations are the biggest schedule risk.** Timbers-and-bricks is day-2-afternoon work. If day 1 slips, the visual pass shrinks to material tint + heat glow + air tint, which still demos well. Engine and advice first.
 - **Accounts on day 1 would be a mistake.** Sessions + share codes satisfy every "come back later" requirement without email deliverability, SMTP, or redirect debugging. Accounts are day-2-if-time. (Locked in Prompt 2.)
@@ -149,7 +163,7 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 - **Address privacy.** Round coordinates to ~1 km, never persist the address string, say so in the UI.
 - **Low-CFM whole-house fan.** Steve's QuietCool Classic is 1,472 CFM, about 5 ACH on his house. That is a run-all-night device, not a 15-minute flush. The planner must handle both regimes: low-CFM fans get long overnight windows, big fans get short bursts.
 
-## 9. Open questions for Steve
+## 10. Open questions for Steve
 
 All Prompt 2 questions were answered in Prompt 3. Remaining, non-blocking:
 1. CI/CD conventions from the VPS side (Steve will report back). Defaults: port 3000, `DATABASE_URL`, `/api/health`.
