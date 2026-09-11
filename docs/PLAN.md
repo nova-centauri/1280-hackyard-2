@@ -121,12 +121,14 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 |---|---|
 | Next.js scaffold, Tailwind, deps | done |
 | Engine: derive, solar, simulate, planner | done, 21 Vitest tests green, validated on Steve's house |
-| Weather / air quality / geocoding clients | written, not yet wired to UI |
-| DB (Drizzle, PGlite/Postgres) + session cookie | written, not yet exercised |
-| API routes | pending |
-| Two-panel UI + forms + timeline + chart + assumptions | pending |
-| 3D house v1 | pending |
-| Dockerfile / compose | pending |
+| Weather / air quality / geocoding clients | done, live against Open-Meteo and Nominatim |
+| DB (Drizzle, PGlite/Postgres) + session cookie | done, smoke-tested (cookie, autosave, share code) |
+| API routes | done: health, house, share, share/[code], weather, geocode |
+| Two-panel UI + forms + timeline + chart + assumptions | done (structural pass), verified in headless Chromium on desktop and mobile |
+| 3D house v1 | done: procedural floors/roof/windows, real sun, cloud dimming, air-tinted windows, heat glow on sun-facing walls, breeze particles, grow-in animation |
+| Dockerfile / compose | written; Docker not available in the build sandbox, so the image is untested until Steve's VPS builds it |
+| Accounts (stretch) | not started |
+| Home Assistant push | post-competition |
 | Visual pass (v2) | day 2 |
 
 ## 7. Two-day schedule

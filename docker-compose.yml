@@ -1,0 +1,29 @@
+# Local/prod compose. On Steve's VPS, point DATABASE_URL at the existing Postgres
+# and drop the `db` service; this file is for anyone without one.
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://breezevibe:breezevibe@db:5432/breezevibe
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: breezevibe
+      POSTGRES_PASSWORD: breezevibe
+      POSTGRES_DB: breezevibe
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U breezevibe"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  pgdata:

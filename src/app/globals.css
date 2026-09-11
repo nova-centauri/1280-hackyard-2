@@ -1,26 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #16202a;
+  --muted: #5b6875;
+  --line: #e3e7ec;
+  --accent: #1f7aec;
+  --cool: #3b82f6;
+  --warm: #ef4444;
+  --stale: #eab308;
+  --good: #22c55e;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #0e1319;
+    --panel: #161d26;
+    --ink: #e8edf2;
+    --muted: #93a1af;
+    --line: #26303b;
+    --accent: #5aa0ff;
   }
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+html, body { background: var(--bg); color: var(--ink); }
+body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.muted { color: var(--muted); }
+input, select { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 14px; width: 100%; }
+input[type="checkbox"] { width: auto; }
+input[type="range"] { padding: 0; border: 0; }
+label { font-size: 13px; color: var(--muted); }
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 6px 12px; font-size: 14px; cursor: pointer; }
+.btn-primary { background: var(--accent); color: white; border-color: transparent; }
+details > summary { cursor: pointer; list-style: none; }
+details > summary::-webkit-details-marker { display: none; }

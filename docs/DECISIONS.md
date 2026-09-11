@@ -25,6 +25,9 @@ Format: date, decision, why, status. Pending items at the bottom need Steve's an
 
 Superseded: Vercel + Supabase (v0.1 proposal) → replaced by VPS + SQLite per Prompt 2.
 
+| 2026-09-11 | Share codes look like `BV-XXX-XXX` from an alphabet without 0/O/1/I; lookup is case- and dash-insensitive | Readable when spoken or typed on a phone. | Proposed |
+| 2026-09-11 | PGlite data lives at `./data/pglite` relative to the server's working directory (`/app/data` in Docker) | Simple; production uses Postgres anyway. | Proposed |
+
 ## Pending (need Steve; build proceeds on the default)
 
 | # | Question | Default until answered | Answer |

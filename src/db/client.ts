@@ -1,4 +1,5 @@
 import 'server-only';
+import { mkdirSync } from 'node:fs';
 import { sql } from 'drizzle-orm';
 import type { PgDatabase } from 'drizzle-orm/pg-core';
 import * as schema from './schema';
@@ -26,6 +27,7 @@ export function getDb(): Promise<Db> {
       const { PGlite } = await import('@electric-sql/pglite');
       const { drizzle } = await import('drizzle-orm/pglite');
       const dir = process.env.PGLITE_DIR ?? './data/pglite';
+      mkdirSync(dir, { recursive: true });
       db = drizzle(new PGlite(dir), { schema }) as unknown as Db;
     }
     for (const stmt of DDL.split(';').map((s) => s.trim()).filter(Boolean)) {
