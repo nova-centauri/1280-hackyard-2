@@ -36,6 +36,14 @@ Health check: `GET /api/health` returns `{ ok: true, db: "postgres" | "pglite" }
 
 Tables are created on first boot (`CREATE TABLE IF NOT EXISTS`), so no migration step is needed.
 
+### CI/CD (webhook-pull)
+
+- `.github/workflows/ci.yml` runs `pnpm install --frozen-lockfile` + `pnpm test` on every push and PR; on `main` it also builds the Docker image and checks `GET /api/health` returns 200.
+- After green on `main`, the `notify-vps` job POSTs a GitHub-push-shaped payload (`after` = SHA, HMAC `X-Hub-Signature-256`) to the `breezevibe-deploy` hook on VPS-01, which runs `/opt/breezevibe/deploy.sh`. Nothing is rsynced or SSHed from CI.
+- Requires repo secrets `DEPLOY_WEBHOOK_URL` and `DEPLOY_WEBHOOK_SECRET`; if either is missing the notify job skips with a warning and CI still passes.
+- Production container listens on host `127.0.0.1:3060`; `DATABASE_URL` comes from `/opt/breezevibe/.env` (host Postgres role+db `breezevibe`). The compose `db` service is local-only.
+- The VPS gates nginx on `GET /api/health` 200 before switching off the static placeholder.
+
 **Cloudflare:** proxying is fine, but add a cache rule that **bypasses cache for `/api/*` and `/h/*`**. Responses there are per-session; edge-caching them would serve one visitor's house to another.
 
 ## How it works

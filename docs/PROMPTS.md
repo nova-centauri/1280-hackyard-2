@@ -39,3 +39,45 @@ Make a firm rule to store all planning documents in the repo itself. You should 
 ## Prompt 4 — 2026-09-11
 
 Push to main
+
+---
+
+## Prompt 5 — 2026-09-11
+
+Add GitHub Actions CI/CD to nova-centauri/1280-hackyard-2 so pushes to main continuously deploy BreezeVibe to VPS-1 (breezevibe.site).
+
+Context:
+- This branch (claude/home-temp-management-site-jnz8cn, PR #1) is a Next.js 16 app with pnpm, Dockerfile (standalone on 3000), docker-compose (local postgres only), Drizzle, GET /api/health.
+- Production should use existing VPS Postgres via DATABASE_URL, NOT the compose db service.
+- Live site today is a static placeholder at /opt/breezevibe/site on 187.77.195.139 (nginx + LE). VPS-01 is upgrading deploy.sh/nginx to run this Docker app; do not assume that is done yet.
+- Sister pattern: nova-centauri/amail-saas-site .github/workflows/deploy.yml uses secrets VPS_HOST, VPS_USER, VPS_SSH_KEY, DEPLOY_PATH. Hypestar uses a GitHub webhook to /opt/hypestar/deploy.sh.
+- Prefer: on pull_request and push: pnpm install --frozen-lockfile + pnpm test (vitest). On push to main: also docker build (to prove the image) AND a deploy job that SSHes like amail if VPS_SSH_KEY is set, otherwise skip deploy with a warning (do not fail the workflow when secrets are missing).
+- Deploy job should rsync/copy the repo or image context to /opt/breezevibe (DEPLOY_PATH default /opt/breezevibe) and run `/opt/breezevibe/deploy.sh` with the SHA if that script exists; if deploy.sh is still the placeholder installer, still call it but document that VPS-01 must replace it.
+- Do NOT put real secrets, passwords, or DATABASE_URL values in the repo. Keep .env.example as-is.
+- Do NOT expand product scope (no new thermal features).
+- Open a PR (or push on this branch if that is the PR already) with the workflow files. Keep it small.
+
+Success: .github/workflows exist; CI runs tests on PR; main has a deploy job gated on secrets; README has a 5-line CI/CD note.
+
+---
+
+## Prompt 6 — 2026-09-11
+
+Change of deploy contract from VPS-01 — do NOT rsync and do NOT SSH a static tree.
+
+Pattern is webhook-pull, same as hypestar:
+- GHA: on PR + push, pnpm test (and docker build on main if cheap). That is the CI.
+- After green on main, you MAY POST the GitHub webhook that VPS-01 registers (`breezevibe-deploy` → /opt/breezevibe/deploy.sh with payload `after` = SHA). If the webhook secret is not in repo secrets yet, skip the notify job with a warning; do not fail CI.
+- Do not use VPS_SSH_KEY / rsync / DEPLOY_PATH promote.
+- Production: container listens on host 127.0.0.1:3060. DATABASE_URL comes from /opt/breezevibe/.env on the box (host Postgres role+db breezevibe). Compose `db` service is local-only.
+- Health gate on the VPS is GET /api/health 200 before nginx flips off the placeholder.
+
+Keep the PR small: workflows + a short README CI/CD note reflecting webhook-pull, port 3060, host Postgres.
+
+---
+
+## Prompt 7 — 2026-09-11
+
+PR #1 is merged to main (2c2480d). PR #2 is now CONFLICTING because it still bases on claude/home-temp-management-site-jnz8cn.
+
+Rebase your CI/webhook-pull workflow onto current main and retarget PR #2 at main so it can merge. Do not change product code. Keep GHA as: test on PR/push; docker build on main; notify-vps webhook POST after green on main (secrets DEPLOY_WEBHOOK_URL + DEPLOY_WEBHOOK_SECRET already set on the repo). No rsync.

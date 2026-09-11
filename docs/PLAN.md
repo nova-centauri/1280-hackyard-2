@@ -127,6 +127,7 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 | Two-panel UI + forms + timeline + chart + assumptions | done (structural pass), verified in headless Chromium on desktop and mobile |
 | 3D house v1 | done: procedural floors/roof/windows, real sun, cloud dimming, air-tinted windows, heat glow on sun-facing walls, breeze particles, grow-in animation |
 | Dockerfile / compose | written; Docker not available in the build sandbox, so the image is untested until Steve's VPS builds it |
+| CI/CD (`.github/workflows/ci.yml`) | done: `pnpm test` on push + PR; on `main` docker build + `/api/health` smoke, then `breezevibe-deploy` webhook POST to VPS-01 (skips with a warning until `DEPLOY_WEBHOOK_URL`/`DEPLOY_WEBHOOK_SECRET` are set) |
 | Accounts (stretch) | not started |
 | Home Assistant push | post-competition |
 | Visual pass (v2) | day 2 |
@@ -168,5 +169,6 @@ where `Q_vent` depends on the action: closed = infiltration only; windows open =
 ## 10. Open questions for Steve
 
 All Prompt 2 questions were answered in Prompt 3. Remaining, non-blocking:
-1. CI/CD conventions from the VPS side (Steve will report back). Defaults: port 3000, `DATABASE_URL`, `/api/health`.
+1. ~~CI/CD conventions from the VPS side~~ — answered in Prompt 6 (webhook-pull, host `127.0.0.1:3060`, `DATABASE_URL` from `/opt/breezevibe/.env`, `/api/health` gate). See `docs/DECISIONS.md`.
 2. Tree shade on the SW side of the test house. Default: none.
+3. VPS-01 must register the `breezevibe-deploy` hook and hand over `DEPLOY_WEBHOOK_URL` + `DEPLOY_WEBHOOK_SECRET` as repo secrets before the notify job does anything.
